@@ -35,5 +35,3 @@ def plot_missclassified(plot_arr, pre):
   axarr[1, 3].set_title(pre[8].cpu().item())
   axarr[1,4].imshow(plot_arr[9])
   axarr[1, 4].set_title(pre[9].cpu().item())
-
-  plot_missclassified(plot_arr, pre)
