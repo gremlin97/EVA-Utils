@@ -39,7 +39,7 @@ classes = ('plane', 'car', 'bird', 'cat',
 
 net = ResNet18()
 trainset = Cifar10(root='./data', train=True,download=True, transform=transform)
-testset = Cifar10(root='./data', train=False,download=True, transform=transform)
+testset = Cifar10(root='./data', train=False,download=True)
 criterion = nn.CrossEntropyLoss()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
@@ -54,6 +54,7 @@ def init_modeloptim(lr=0.01):
   return optimizer
 
 def train(epochs, optimizer, trainloader):
+  net.train()
   for epoch in range(epochs):  # loop over the dataset multiple times
 
       running_loss = 0.0
