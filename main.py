@@ -8,6 +8,8 @@ import torch.nn.functional as F
 import torchvision
 import torchvision.transforms as transforms
 import torch.optim as optim
+from PIL import Image
+import torchvision.transforms.functional as TF
 from models.model import *
 from utils import *
 
