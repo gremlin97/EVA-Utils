@@ -11,9 +11,17 @@ import torch.optim as optim
 from models.model import *
 from utils import *
 
-transform = A.Compose([
+train_transform = A.Compose([
     A.RandomCrop(32,32),
     A.Cutout(num_holes=1, max_h_size=16, max_w_size=16, fill_value=127),
+    A.Normalize(
+        mean=[0.5, 0.5, 0.5],
+        std=[0.5, 0.5, 0.5],
+    ),
+    ToTensorV2()
+])
+
+test_transform = A.Compose([
     A.Normalize(
         mean=[0.5, 0.5, 0.5],
         std=[0.5, 0.5, 0.5],
@@ -38,8 +46,8 @@ classes = ('plane', 'car', 'bird', 'cat',
            'deer', 'dog', 'frog', 'horse', 'ship', 'truck')
 
 net = ResNet18()
-trainset = Cifar10(root='./data', train=True,download=True, transform=transform)
-testset = Cifar10(root='./data', train=False,download=True)
+trainset = Cifar10(root='./data', train=True,download=True, transform=train_transform)
+testset = Cifar10(root='./data', train=False,download=True, transform=test_transform)
 criterion = nn.CrossEntropyLoss()
 
 device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
