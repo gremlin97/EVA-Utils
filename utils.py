@@ -43,15 +43,22 @@ def plot_missclassified(plot_arr, pre):
   axarr[1,4].imshow(plot_arr[9])
   axarr[1, 4].set_title(pre[9].cpu().item())
     
-def grad_cam(net, targets, input_tensor):
-  target_layers = [net.layer4[0].conv1,net.layer3[0].conv1]
-  # targets = [ClassifierOutputTarget(0)]
-  with GradCAM(model=net,
-              target_layers=target_layers,
-              use_cuda=torch.cuda.is_available()) as cam:
-      grayscale_cam = cam(input_tensor=input_tensor,
-                          targets=targets)[0, :]
-      cam_image = show_cam_on_image(img, grayscale_cam, use_rgb=True)
+def grad_cam(net, plot_arr):
+  target_layers = [net.layer4[0].conv1]
+  res = []
+  for i in range(0,10):
+    input_tensor = preprocess_image(plot_arr[i],
+                                mean=[0.485, 0.456, 0.406],
+                                std=[0.229, 0.224, 0.225])
+    img = plot_arr[i]
+    img = np.float32(img) / 255
+    with GradCAM(model=net,
+                target_layers=target_layers,
+                use_cuda=torch.cuda.is_available()) as cam:
+        grayscale_cam = cam(input_tensor=input_tensor,
+                            targets=[ClassifierOutputTarget(i)])[0, :]
+        cam_image = show_cam_on_image(img, grayscale_cam, use_rgb=True)
 
-  img_g = Image.fromarray(cam_image)
-  return img_g
+    img_g = Image.fromarray(cam_image)
+    res.append(img_g)
+  return res
