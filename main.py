@@ -131,7 +131,7 @@ def test(testloader):
             img = TF.to_pil_image(wrong_samples)
             # print(img.shape)
             inc.append(img)
-            pre.append(actual_preds)
+            pre.append(wrong_preds)
 
       plot_arr = []
       for i in range(len(inc)):
