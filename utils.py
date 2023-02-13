@@ -38,7 +38,7 @@ def plot_missclassified(plot_arr, pre):
   axarr[1,4].imshow(plot_arr[9])
   axarr[1, 4].set_title(pre[9].cpu().item())
     
-def grad_cam(net, targets):
+def grad_cam(net, targets, input_tensor):
   target_layers = [net.layer4[0].conv1,net.layer3[0].conv1]
   # targets = [ClassifierOutputTarget(0)]
   with GradCAM(model=net,
