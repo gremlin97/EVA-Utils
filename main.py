@@ -101,44 +101,8 @@ def train(epochs, optimizer, trainloader):
   print('Finished Training')
   return loss_arr
 
+
 def test(testloader):
-  inc = []
-  pre = []
-  correct = 0
-  total = 0
-  with torch.no_grad():
-      for data in testloader:
-          images, labels = data
-          images=images.to(device)
-          labels=labels.to(device)
-          outputs = net(images)
-          _, predicted = torch.max(outputs.data, 1)
-          total += labels.size(0)
-          correct += (predicted == labels).sum().item()
-
-          # Store wrongly predicted images
-          if (predicted != labels).sum().item()>0:
-            wrong_idx = ((predicted != labels).nonzero()[:,0])[0].item()
-            wrong_samples = images[wrong_idx]
-            wrong_preds = predicted[wrong_idx]
-            actual_preds = labels.view_as(predicted)[wrong_idx]
-
-            # Undo normalization
-            wrong_samples = wrong_samples * 0.5
-            wrong_samples = wrong_samples + 0.5
-            wrong_samples = wrong_samples * 255.
-            wrong_samples = wrong_samples.byte()
-            img = TF.to_pil_image(wrong_samples)
-            # print(img.shape)
-            inc.append(img)
-            pre.append(wrong_preds)
-
-      plot_arr = []
-      for i in range(len(inc)):
-        # plot_arr.append(inc[i].cpu().data.numpy()[0])
-        plot_arr.append(inc[i])
-
-def test_t(testloader):
   inc = []
   pre = []
   correct = 0
