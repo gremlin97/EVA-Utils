@@ -1,5 +1,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
+from models.model import *
+from main import *
 
 # functions to show an image
 def imshow(img):
@@ -35,3 +37,16 @@ def plot_missclassified(plot_arr, pre):
   axarr[1, 3].set_title(pre[8].cpu().item())
   axarr[1,4].imshow(plot_arr[9])
   axarr[1, 4].set_title(pre[9].cpu().item())
+    
+def grad_cam(net, targets):
+  target_layers = [net.layer4[0].conv1,net.layer3[0].conv1]
+  # targets = [ClassifierOutputTarget(0)]
+  with GradCAM(model=net,
+              target_layers=target_layers,
+              use_cuda=torch.cuda.is_available()) as cam:
+      grayscale_cam = cam(input_tensor=input_tensor,
+                          targets=targets)[0, :]
+      cam_image = show_cam_on_image(img, grayscale_cam, use_rgb=True)
+
+  img_g = Image.fromarray(cam_image)
+  return img_g
