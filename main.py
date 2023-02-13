@@ -64,6 +64,7 @@ def init_modeloptim(lr=0.01):
   return optimizer
 
 def train(epochs, optimizer, trainloader):
+  loss_arr = []
   net.train()
   for epoch in range(epochs):  # loop over the dataset multiple times
 
@@ -95,8 +96,10 @@ def train(epochs, optimizer, trainloader):
                     (epoch + 1, i + 1, running_loss / 2000))
               running_loss = 0.0
       print("Accuracy is:",acc)
+      loss_arr.append(running_loss/len(trainloader.dataset))
 
   print('Finished Training')
+  return loss_arr
 
 def test(testloader):
   inc = []
