@@ -145,8 +145,3 @@ def test(testloader):
       100 * correct / total))
   
   return plot_arr, pre
-
-  print('Accuracy of the network on the 10000 test images: %d %%' % (
-      100 * correct / total))
-  
-  return plot_arr, pre
