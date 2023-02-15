@@ -102,7 +102,7 @@ def train(epochs, optimizer, trainloader):
   return loss_arr
 
 
-def test(testloader):
+def test_model(testloader):
   inc = []
   pre = []
   correct = 0
