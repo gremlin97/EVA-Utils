@@ -59,7 +59,7 @@ def init_dataloader(batch):
     testloader = torch.utils.data.DataLoader(testset,batch_size = batch, shuffle=True)
     return trainloader, testloader
 
-def init_modeloptim(lr=0.01):
+def init_modeloptim(lr=0.001):
   optimizer = optim.SGD(net.parameters(), lr=lr, momentum=0.9)
   return optimizer
 
@@ -142,6 +142,89 @@ def test_model(testloader):
         plot_arr.append(inc[i])
 
   print('Accuracy of the network on the 10000 test images: %d %%' % (
+      100 * correct / total))
+  
+  return plot_arr, pre
+
+def train_gen(model, epochs, optimizer, trainloader):
+  loss_arr = []
+  model.train()
+  for epoch in range(epochs):  # loop over the dataset multiple times
+
+      running_loss = 0.0
+      correct = 0
+      for i, data in enumerate(trainloader, 0):
+          # get the inputs
+          inputs, labels = data
+
+          inputs=inputs.to(device)
+          labels=labels.to(device)
+                          
+          # zero the parameter gradients
+          optimizer.zero_grad()
+
+          # forward + backward + optimize
+          outputs = model(inputs)
+          loss = criterion(outputs, labels)
+          loss.backward()
+          optimizer.step()
+
+          # print statistics
+          running_loss += loss.item()
+          pred = outputs.argmax(dim=1, keepdim=True)  # get the index of the max log-probability
+          correct += pred.eq(labels.view_as(pred)).sum().item()
+          acc = 100. * correct / len(trainloader.dataset)
+          if i % 2000 == 1999:    # print every 2000 mini-batches
+              print('[%d, %5d] loss: %.3f' %(epoch + 1, i + 1, running_loss / 2000))
+              running_loss = 0.0
+      print("Accuracy is:",acc)
+      loss_arr.append(running_loss/len(trainloader.dataset))
+      scheduler.step()
+
+  print('Finished Training')
+  return loss_arr
+
+
+def test_gen(model, testloader):
+  inc = []
+  pre = []
+  correct = 0
+  total = 0
+  test_loss = 0
+  model.eval()
+  with torch.no_grad():
+      for data in testloader:
+          images, labels = data
+          images=images.to(device)
+          labels=labels.to(device)
+          outputs = model(images)
+          _, predicted = torch.max(outputs.data, 1)
+          total += labels.size(0)
+          correct += (predicted == labels).sum().item()
+
+          # Store wrongly predicted images
+          if (predicted != labels).sum().item()>0:
+            wrong_idx = ((predicted != labels).nonzero()[:,0])[0].item()
+            wrong_samples = images[wrong_idx]
+            wrong_preds = predicted[wrong_idx]
+            actual_preds = labels.view_as(predicted)[wrong_idx]
+
+            # Undo normalization
+            wrong_samples = wrong_samples * 0.5
+            wrong_samples = wrong_samples + 0.5
+            wrong_samples = wrong_samples * 255.
+            wrong_samples = wrong_samples.byte()
+            img = TF.to_pil_image(wrong_samples)
+            # print(img.shape)
+            inc.append(img)
+            pre.append(wrong_preds)
+
+      plot_arr = []
+      for i in range(len(inc)):
+        # plot_arr.append(inc[i].cpu().data.numpy()[0])
+        plot_arr.append(inc[i])
+
+  print('Accuracy of the model on the 10000 test images: %d %%' % (
       100 * correct / total))
   
   return plot_arr, pre
