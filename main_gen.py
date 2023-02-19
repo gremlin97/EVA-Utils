@@ -54,12 +54,10 @@ classes = ('plane', 'car', 'bird', 'cat',
 trainset = Cifar10(root='./data', train=True,download=True, transform=train_transform)
 testset = Cifar10(root='./data', train=False,download=True, transform=test_transform)
 
-
-def init_optim(lr=0.01):
+def init_optim_gen(model, lr=0.01):
   optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
   criterion = nn.CrossEntropyLoss()
   return optimizer, criterion
-
 
 def init_dataloader(batch):
   trainloader = torch.utils.data.DataLoader(trainset,batch_size = 512, shuffle=True)
