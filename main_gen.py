@@ -64,7 +64,7 @@ def init_dataloader(batch):
   testloader = torch.utils.data.DataLoader(testset,batch_size = 512, shuffle=True)
   return trainloader, testloader
 
-def train_gen(model, epochs, optimizer, trainloader):
+def train_gen(model, epochs, optimizer, trainloader, scheduler):
   loss_arr = []
   model.train()
   for epoch in range(epochs):  # loop over the dataset multiple times
