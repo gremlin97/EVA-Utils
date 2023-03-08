@@ -59,6 +59,15 @@ def init_optim_gen(model, lr=0.01):
   criterion = nn.CrossEntropyLoss()
   return optimizer, criterion
 
+def init_optim_any(model, type, lr=0.01):
+  if type == "sgd":
+    optimizer = optim.SGD(model.parameters(), lr=lr, momentum=0.9)
+  else:
+    optimizer = optim.Adam(model.parameters(), lr=lr)
+    
+  criterion = nn.CrossEntropyLoss()
+  return optimizer, criterion
+
 def init_dataloader(batch):
   trainloader = torch.utils.data.DataLoader(trainset,batch_size = 512, shuffle=True)
   testloader = torch.utils.data.DataLoader(testset,batch_size = 512, shuffle=True)
